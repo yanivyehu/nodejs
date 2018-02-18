@@ -1,0 +1,7 @@
+npm init : create package.json file.
+
+npm install : look for package.json (in current directory) and install the required dependencies.
+
+npm install -g XXXX : intall globally package 'XXXX'
+
+npm install --save XXXX: install locally package 'XXXX' and update package.json
