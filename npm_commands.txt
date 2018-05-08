@@ -1,7 +1,19 @@
+npm ls [Filter]: list the installed packages.
+
 npm init : create package.json file.
 
 npm install : look for package.json (in current directory) and install the required dependencies.
 
-npm install -g XXXX : intall globally package 'XXXX'
+npm install -g XXXX : install globally package 'XXXX' (used mainly to install a tool)
 
-npm install --save XXXX: install locally package 'XXXX' and update package.json
+npm install --save XXXX: install package 'XXXX' and save it as a dependecy in package.json
+npm install --save-dev XXXX: install package 'XXXX' and save it as a dev-dependecy in package.json
+
+npm list XXXX :search where the package exists
+
+npm start: start node application (running according to package.json)
+
+npm run 'devstart' : start node application running a script defined in 'scripts' section in package.json
+
+//web application sekeletons
+npm install express-generator -g: install express web application skeleton
