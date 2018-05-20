@@ -1,0 +1,96 @@
+
+#Setup#
+start mongo server:
+mongod --dbpath "C:\Yaniv's Files\Private\node_projects\DB\db1"
+mongod --port XXXX
+start mongo client:
+mongo
+
+#create a database on the currently running server from existing source
+mongorestore
+todo: add usage example
+mongoimport:
+mongoimport -d DB_NAME -c COLLECTION_NAME PATH_OF_JSON_FILE_CONTAINS_DOCUMENTS
+
+#Commands#
+use DB_NAME (will be created if not exists)
+
+//delete DB
+db.dropDatabase()
+
+### Create documents ###
+db.mycollection.insertOne( { x : 1 } ); //no _id fields is specified, so mongodb will add it.
+db.mycollection.insertMany( { x : 1 } , { x : 2} , { x : 3 } );
+
+### READ documents ####
+db.mycollection.find()                                             // no condition
+db.mycollection.find({})                                           // no condition
+db.mycollection.find( { x : 1 } )                                  // one condition
+db.mycollection.find( { x : 1 , y : 1} )                           // AND condition
+db.mycollection.find( { "x.y" : 1 } )                              // nested-object example (dot-notation, nested field is surrounded with "")
+db.mycollection.find( { x : 1 }).count()                           // count results
+
+//Arrays querys
+db.mycollection.find( { "arrayName" : ["elem1","elem2"] }).pretty()  // exact match for array that contains "elem1" and "elem2" in THIS order and they are the ONLY elements!
+db.mycollection.find( { "arrayName" : "elem1" }).pretty()            // search for string "elem1" in array
+db.mycollection.find( { "arrayName.0" : "elem1" })                   // first element in array it is "elem1"
+db.mycollection.find( { arrayName : { $all : ["elem1","elem2,elem3"] } )  // all of the strings must appear in the array
+db.mycollection.find( { arrayName : { $size : 5 } ) //array is of size 5
+db.mycollection.find( { arrayName : { $elemMatch : { x : "1", y :2 } } ) //match array that one it's element all of the constraints
+
+//Cursor
+the return value of find method is a cursor object!!!
+var c = db.mycollection.find();
+c.hasNext();
+c.next();
+c.objLeftInBatch();
+
+//Projections: allows to get only specific fields of the matching documents (use to reduce amount of info in traffic)
+db.mycollection.find( { x : 1 } , { title : 1 , _id : 0 }) //get all documents where x is 1, show ONLY title info.
+db.mycollection.find( { x : 1 } , { title : 0 , _id : 0 }) //get all documents where x is 1, show any field Except title info.
+
+Comparison operators
+db.mycollection.find( { x : { $gt : 2 } } , { title : 1 , _id : 0 }) //grater than 2
+db.mycollection.find( { x : { $gt : 2, $lt : 5 } } , { title : 1 , _id : 0 }) //grater than 2 AND little than 4
+
+Element operatores
+db.mycollection.find( { x : { $exists : true } } , { title : 1 , _id : 0 }) //is x field exists
+db.mycollection.find( { x : { $type : "string" } } , { title : 1 , _id : 0 }) //is typeof x is a string
+
+Logical operators
+db.mycollection.find( { $or : [ { x : { $gt : 1 } } , { y : { $lt : 1 } } ] }) // $or gets array of conditions
+
+/**
+$and need to be used when we want to ask about the same field!
+the $and allows us to specify constraints on the same field.
+**/
+db.mycollection.find( { $and : [ { x : { $exists : 1 } } , { x : { $lt : 1 } } ] })
+
+
+Regex operator
+db.mycollection.find( { text : { $regex : /^count/s.*/ } }) //match string by a regex
+
+### UPDATE documents ###
+db.mycollection.updateOne( { x : 1 } , { $set : { x : 4 } } ) //replace x to be 4 in the first document math with the cretria that x equlas to 1
+db.mycollection.updateOne( { x : 1 }, { $set : { y : 4 }}) //add y to the record
+
+### DELETE documents ###
+
+queries from HW:
+db.movieDetails.find({$and :[{ year : 2013 }, { rated : "PG-13" }, { "awards.wins" : 0 } ]})
+
+//count query
+db.movieDetails.count( { genres : {$all : ["Comedy","Crime"] } })  === db.movieDetails.find( { genres : {$all : ["Comedy","Crime"] } }).count
+
+additional info
+_id field: is created for every document and composed of 12 bytes (date|mac_addr|pid|counter)
+
+
+//sort, limit, skip
+db.students.find({}).skip(10).limit(2).sort({ grade : 1})
+
+what happens here?
+The order is always as the following:
+sort
+skip
+limit

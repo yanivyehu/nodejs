@@ -1,4 +1,4 @@
-npm ls [Filter]: list the installed packages.
+npm ls [Filter] : list the installed packages.
 
 npm init : create package.json file.
 

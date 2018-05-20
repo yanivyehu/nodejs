@@ -10,9 +10,8 @@ var web3 = new Web3();
 
 // Set the provider
 web3.setProvider(
-  new Web3.providers.WebsocketProvider(
-    'ws://localhost:8546'
-  )
+  //new Web3.providers.WebsocketProvider('ws://localhost:8546')
+  new Web3('ws://localhost:8546')
 );
 
 function checkBalance() {
